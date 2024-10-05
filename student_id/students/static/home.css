@@ -1,0 +1,10 @@
+.input{
+  border: none;
+  border-bottom: black solid 5px;
+}
+
+@media screen and (max-width: 767px){
+  #pob{
+    margin-top: 17px;
+  }
+}

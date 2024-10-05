@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {%load static%}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="{%static 'house.svg'%}" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link rel="stylesheet" href="{%static 'student_dashboard.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <title>Login</title>
+  <style>
+    .container{
+        position: relative;
+    }
+    #cam{
+        position: absolute;
+        top: 24%;
+        left: 52%;
+        font-size: 20px;
+        color: white;
+        border: 6px solid black;
+        border-radius: 15px;
+        background-color: black;
+    }
+</style>
+</head>
+
+<body>
+  <div class="container-fluid d-flex justify-content-center align-items-center vh-100 form animate__animated animate__backInDown">
+    <div id="student">
+      <div class="text-center pt-4">
+        {%if user %}
+        <img src="{{ user.Users_profile.profile_picture.url }}" width="100" height="100" class="rounded-pill">
+        {% else %}
+          <p>No Pic</p>
+        {%endif%}
+        <form method="POST" enctype="multipart/form-data">
+          {%csrf_token%}
+          <label>
+            <i id="cam" class="fa-solid fa-camera"></i>
+            <input type="file" name="picture" id="in" style="display: none;">
+            <button type="submit" class="btn btn-info">Upload</button>
+        </label>
+        </form>
+      </div>
+      <div>
+        <div id="details_background"></div>
+        <div id="student_details" class="mt-5 pt-4">
+          <p><b>Name: {{user.name}}</b></p>
+          <p><b>Department: {{user.dpt}}</b></p>
+          <p><b>Matric number: {{user.mat_number}}</b></p>
+          <p><b>Expiring date: {{user.id_expires}}</b></p>
+        </div>
+      </div>
+      <div class="text-center">
+        <a class="mx-3 bg-success py-2 px-3 float-end text-decoration-none text-white rounded-3" href="{% url 'student:details' user.id %}">Edit</a>
+        <a class="mx-3 bg-danger py-2 px-3 float-end text-decoration-none text-white rounded-3" href="{% url 'student:logout'%}">Logout</a>
+      </div>
+    </div>
+  </div>
+
+  {% if img %}
+  <img src="{{ img.profile_picture.url }}" alt="Profile Picture">
+{% else %}
+  <p>No profile picture available.</p>
+{% endif %}
+
+</body>
+
+</html>
