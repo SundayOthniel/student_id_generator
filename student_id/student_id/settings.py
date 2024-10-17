@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # This help django to understand that this app exist in to project to migrate their model to database which in turn form the table
     'students.apps.StudentsConfig',
     'adminn.apps.AdminnConfig',
 ]
@@ -56,10 +58,23 @@ ROOT_URLCONF = 'student_id.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        """
+Template directories configuration for the Django project.
+
+This setting specifies the directories where Django looks for HTML templates 
+for rendering views. By including these directories, Django will search within 
+the specified paths to locate templates for the adminn and student apps.
+
+The paths are defined relative to BASE_DIR, which represents the project's base directory.
+
+DIRS:
+    - BASE_DIR / 'adminn/templates': Directory containing templates for the 'adminn' app.
+    - BASE_DIR / 'student/templates': Directory containing templates for the 'student' app.
+"""
+
         'DIRS': [
             BASE_DIR / 'adminn/templates',
             BASE_DIR / 'student/templates',
-            
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -79,22 +94,40 @@ WSGI_APPLICATION = 'student_id.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+"""
+Database configuration for the Django project.
+
+This setting defines the connection details for the MySQL database used by the project.
+It specifies the backend engine, database name, user credentials, and connection details.
+
+DATABASES:
+    - default: The primary database configuration for the project.
+
+        - ENGINE: Specifies the database backend to use. Here, 'django.db.backends.mysql' 
+          indicates that MySQL is being used as the database engine.
+        - NAME: The name of the MySQL database ('student_id') that the project connects to.
+        - USER: The username ('root') used to connect to the MySQL database.
+        - PASSWORD: The password ('root') associated with the user for authentication.
+        - HOSTNAME: The host address ('127.0.0.1') where the database server is running, 
+          typically '127.0.0.1' for a local server.
+        - PORT: The port number ('3306') for connecting to the MySQL server, which is 
+          the default port for MySQL.
+
+This configuration allows Django to interact with the specified MySQL database 
+for storing and retrieving data.
+"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME':'student_id',
+        'NAME': 'student_id',
         'USER': 'root',
         'PASSWORD': 'root',
-        'HOSTENAME': '127.0.0.1',
-        'PORT':'3306',
+        'HOSTNAME': '127.0.0.1',
+        'PORT': '3306',
     }
 }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -130,15 +163,57 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
+"""
+Static and media files configuration for the Django project.
+
+These settings define how Django serves and stores static and media files, 
+which include assets like CSS, JavaScript, images, and uploaded files.
+
+Static Files:
+    - STATIC_URL: The URL prefix ('static/') used to access static files in the browser.
+      When serving static files, this prefix is used to locate them in templates and pages.
+    - STATIC_ROOT: The file system path where collected static files will be stored.
+      'BASE_DIR / "static/"' specifies that the static files will be collected into 
+      a 'static' directory located in the base directory of the project. 
+"""
+
 STATIC_URL = 'static/'
-STATIC_ROOT  = BASE_DIR / 'static/'
+STATIC_ROOT = BASE_DIR / 'static/'      
+
+"""
+Media Files:
+    - MEDIA_URL: The URL prefix ('media/') used to access media files in the browser.
+      This is used for serving user-uploaded files, such as images and documents.
+    - MEDIA_ROOT: The file system path where uploaded media files will be stored.
+      'BASE_DIR / "media/"' indicates that uploaded files will be saved in a 'media' 
+      directory within the project's base directory.
+
+These configurations ensure that Django can serve static assets and user-uploaded files 
+efficiently during development and production.
+"""
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+"""
+Custom user model configuration for the Django project.
+
+This setting specifies the model to use as the user model for authentication instead of 
+the default `django.contrib.auth.models.User`.
+
+AUTH_USER_MODEL:
+    - 'students.Users': Refers to the custom user model defined in the 'students' app.
+      This model replaces Django's default user model, allowing for custom fields and behavior 
+      tailored to the project's needs, such as using different fields for authentication.
+
+By setting `AUTH_USER_MODEL` to 'students.Users', the project uses the custom user model 
+for managing authentication, user profiles, and related functionality.
+"""
 
 AUTH_USER_MODEL = 'students.Users'

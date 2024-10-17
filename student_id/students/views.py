@@ -7,8 +7,22 @@ from django.core.files.base import ContentFile
 import os
 from django.conf import settings
 
-
 def register(request):
+    """
+    Handles user registration by creating a new user and their associated profile.
+    
+    If the request method is POST, it retrieves form data to create a new user,
+    verifies the password confirmation, and sets a default profile picture.
+    The user's password is hashed before saving. If registration is successful,
+    redirects the user to the login page; otherwise, reloads the registration page.
+    
+    Args:
+        request: HTTP request object containing metadata about the request.
+    
+    Returns:
+        HttpResponse: Redirects to 'student:login' upon successful registration,
+                      or reloads 'registration.html' template if not successful.
+    """
     if request.method == 'POST':
         name = request.POST.get('name')
         sex = request.POST.get('sex')
@@ -23,8 +37,10 @@ def register(request):
         password = request.POST.get('password')
         cpassword = request.POST.get('cpassword')
         if password == cpassword:
-            user = Users.objects.create(name=name, place_of_birth=pob, sex=sex, date_of_birth=dob,
-                                        address=address, state=state, city=city, lga=lga, mat_number=mat_number, dpt=dpt, password=password)
+            user = Users.objects.create(
+                name=name, place_of_birth=pob, sex=sex, date_of_birth=dob,
+                address=address, state=state, city=city, lga=lga, mat_number=mat_number, dpt=dpt, password=password
+            )
             default_img_path = os.path.join(settings.BASE_DIR, 'students', 'static', 'default-avatar.jpg')
             default_img = Image.open(default_img_path)
             buffer = BytesIO()
@@ -40,8 +56,22 @@ def register(request):
             return redirect('student:register')
     return render(request, 'registration.html')
 
-
 def login_user(request):
+    """
+    Authenticates and logs in a user based on matriculation number and password.
+    
+    If the request method is POST, it retrieves the provided matriculation number
+    and password to authenticate the user. If the user exists and is not a superuser,
+    logs them in and redirects to the dashboard. Superusers are redirected to the admin login.
+    If authentication fails, the user is redirected back to the login page.
+    
+    Args:
+        request: HTTP request object containing metadata about the request.
+    
+    Returns:
+        HttpResponse: Redirects to 'student:dashboard' for normal users,
+                      'adminn:login' for superusers, or reloads 'home.html' if login fails.
+    """
     if request.method == 'POST':
         mat_number = request.POST.get('matric')
         password = request.POST.get('password')
@@ -58,8 +88,21 @@ def login_user(request):
             return redirect('student:login')
     return render(request, 'home.html')
 
-
 def dashboard(request):
+    """
+    Displays the user dashboard and handles profile picture updates.
+    
+    Retrieves and displays the authenticated user's profile information.
+    If the request method is POST, it allows the user to upload and crop
+    a new profile picture. The image is saved in PNG format.
+    
+    Args:
+        request: HTTP request object containing metadata about the request.
+    
+    Returns:
+        HttpResponse: Renders the 'student_dashboard.html' template with user information
+                      and profile picture.
+    """
     user = request.user
     if user.is_authenticated:
         img = get_object_or_404(Users_profile, user=request.user)
@@ -80,9 +123,25 @@ def dashboard(request):
                 pic_data = ContentFile(buffer.getvalue(), pic_name)
                 Users_profile.objects.update_or_create(user=user,  defaults={'profile_picture': pic_data})
                 return redirect('student:dashboard') 
-    return render(request, 'student_dashboard.html', {'user': user, 'img':img})
+    return render(request, 'student_dashboard.html', {'user': user, 'img': img})
 
 def details(request, id):
+    """
+    Displays and updates user details.
+    
+    If the request method is POST, it retrieves the form data to update
+    the user's personal information. After updating, it redirects the user
+    to the dashboard. If the user is authenticated, their profile image is
+    retrieved and displayed.
+    
+    Args:
+        request: HTTP request object containing metadata about the request.
+        id (int): ID of the user whose details are to be displayed or updated.
+    
+    Returns:
+        HttpResponse: Renders the 'student_details.html' template with user information
+                      and profile picture. Redirects to 'student:dashboard' upon update.
+    """
     user = Users.objects.get(id=id)
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -114,9 +173,19 @@ def details(request, id):
         img = get_object_or_404(Users_profile, user=request.user)
     else:
         return redirect('login')
-    return render(request, 'student_details.html', {'user': user, 'img':img})
+    return render(request, 'student_details.html', {'user': user, 'img': img})
 
 def logout_user(request):
+    """
+    Logs out the currently authenticated user.
+    
+    Ends the user's session and redirects them to the login page.
+    
+    Args:
+        request: HTTP request object containing metadata about the request.
+    
+    Returns:
+        HttpResponse: Redirects to 'student:login' after logging out.
+    """
     logout(request)
     return redirect('student:login')
-

@@ -19,12 +19,32 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+"""
+URL configuration for the project.
+
+This module defines the URL patterns for the entire Django project, directing 
+requests to the appropriate application views and handling the serving of static 
+and media files.
+
+- Includes URL patterns for the 'students' app and the 'adminn' app.
+- Serves static files (CSS, JavaScript, images) during development using 
+  Django's static files configuration.
+- Serves media files (user-uploaded content) during development.
+
+Attributes:
+    urlpatterns (list): A list of URL patterns that map URLs to views.
+"""
+
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    # Maps the root URL to the 'students' application URLs.
     path('', include('students.urls')),
+
+    # Maps the 'admin/' URL to the 'adminn' application URLs.
     path('admin/', include('adminn.urls')),
 ]
 
-
+# Serve static files during development.
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+# Serve media files during development.
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

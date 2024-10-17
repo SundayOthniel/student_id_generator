@@ -20,7 +20,8 @@
     <div
       class="container-fluid d-flex justify-content-center align-items-center vh-100">
       <form method="POST" class="form animate__animated animate__backInDown">
-        {%csrf_token%}
+        {%csrf_token%} 
+        {% comment %} This create a unique identifier for a form to prevent CROSS SITE FORGERY {% endcomment %}
         <div>
           <input type="text" class="form-control input" name="matric"
             placeholder="Matric...">
